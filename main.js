@@ -35,6 +35,7 @@ const server = http.createServer(async (req, res) => {
             case 'GET':
                 try {
                     const data = await fs.readFile(filePath);
+                    res.setHeader('X-Cache', 'HIT');
                     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
                     res.end(data);
                 } catch (err) {
@@ -43,6 +44,8 @@ const server = http.createServer(async (req, res) => {
                         const imageBuffer = response.body;
 
                         await fs.writeFile(filePath, imageBuffer);
+
+                        res.setHeader('X-Cache', 'MISS');
                         res.writeHead(200, { 'Content-Type': 'image/jpeg' });
                         res.end(imageBuffer);
                     } catch (fetchErr) {
